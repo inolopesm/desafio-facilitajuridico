@@ -33,6 +33,8 @@ const schema = z.object({
     .min(1, 'Telefone é obrigatório')
     .max(255, 'Telefone é muito longo')
     .regex(/^\+55 \(\d{2}\) \d \d{4}-\d{4}$/, `Telefone deve seguir o formato ${phoneMask}`),
+
+  coordinates: z.object({ x: z.number(), y: z.number() }),
 });
 
 interface Schema extends z.infer<typeof schema> {}
@@ -48,7 +50,7 @@ export function AddClientDialog({ onClose, onSubmit }: AddClientDialogProps) {
 
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
-    defaultValues: { name: '', email: '', phone: '' },
+    defaultValues: { name: '', email: '', phone: '', coordinates: { x: 0, y: 0 } },
   });
 
   const handleValid = async (data: Schema) => {
@@ -96,6 +98,26 @@ export function AddClientDialog({ onClose, onSubmit }: AddClientDialogProps) {
             inputMode="tel"
             error={!!form.formState.errors.phone}
             helperText={form.formState.errors.phone?.message}
+            disabled={form.formState.isSubmitting}
+            fullWidth
+          />
+          <TextField
+            {...form.register('coordinates.x', { valueAsNumber: true })}
+            type="number"
+            label="Latitude"
+            margin="dense"
+            error={!!form.formState.errors.coordinates?.x}
+            helperText={form.formState.errors.coordinates?.x?.message}
+            disabled={form.formState.isSubmitting}
+            fullWidth
+          />
+          <TextField
+            {...form.register('coordinates.y', { valueAsNumber: true })}
+            type="number"
+            label="Longitude"
+            margin="dense"
+            error={!!form.formState.errors.coordinates?.y}
+            helperText={form.formState.errors.coordinates?.y?.message}
             disabled={form.formState.isSubmitting}
             fullWidth
           />

@@ -7,19 +7,43 @@ import Typography from '@mui/material/Typography';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
-import { AddClientResult, getClients } from './services/api/clients';
 import { AddClientDialog } from './components/AddClientDialog';
+import { CalculateRouteDialog } from './components/CalculateRouteDialog';
+import { AddClientResult, getClients } from './services/api/clients';
 
 const columns: GridColDef[] = [
-  { field: 'name', headerName: 'Nome', width: 150 },
-  { field: 'email', headerName: 'E-mail', width: 150 },
-  { field: 'phone', headerName: 'Telefone', width: 150 },
+  {
+    field: 'name',
+    headerName: 'Nome',
+    width: 150,
+  },
+  {
+    field: 'email',
+    headerName: 'E-mail',
+    width: 150,
+  },
+  {
+    field: 'phone',
+    headerName: 'Telefone',
+    width: 150,
+  },
+  {
+    field: 'coordinates',
+    headerName: 'Coordenadas',
+    width: 150,
+    valueGetter: (params) => {
+      const coordinates = params.row.coordinates;
+      if (!coordinates) return '';
+      return `${coordinates.x}, ${coordinates.y}`;
+    },
+  },
 ];
 
 
 export function App() {
   const { enqueueSnackbar } = useSnackbar();
-  const [open, setOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [routeDialogOpen, setRouteDialogOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const query = useQuery({
@@ -50,7 +74,10 @@ export function App() {
             <Typography variant="h4" mr="auto">
               Clientes
             </Typography>
-            <Button variant="contained" onClick={() => setOpen(true)}>
+            <Button variant="outlined" onClick={() => setRouteDialogOpen(true)} sx={{ mr: 2 }}>
+              Calcular Rota
+            </Button>
+            <Button variant="contained" onClick={() => setAddDialogOpen(true)}>
               Adicionar
             </Button>
           </Box>
@@ -68,10 +95,16 @@ export function App() {
         </Container>
       </Box>
 
-      {open && (
+      {addDialogOpen && (
         <AddClientDialog
-          onClose={() => setOpen(false)}
+          onClose={() => setAddDialogOpen(false)}
           onSubmit={handleSubmit}
+        />
+      )}
+
+      {routeDialogOpen && (
+        <CalculateRouteDialog
+          onClose={() => setRouteDialogOpen(false)}
         />
       )}
     </>
