@@ -1,3 +1,4 @@
+import cors from '@fastify/cors';
 import type { JSONSchemaType } from 'ajv';
 import fastify from 'fastify';
 import pg from 'pg';
@@ -23,6 +24,8 @@ dotenv.config();
 const database = new pg.Pool({ connectionString: process.env.POSTGRES_URL });
 
 const server = fastify();
+
+server.register(cors);
 
 server.get('/api/clients', {
   handler: async (request, reply) => {
