@@ -1,0 +1,17 @@
+{
+  "name": "@desafio-facilitajuridico/api",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "dev": "tsx --watch src/main.ts"
+  },
+  "dependencies": {
+    "fastify": "^4.26.2",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.2",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.7.1"
+  }
+}
