@@ -33,6 +33,34 @@ server.get('/api/clients', {
   },
 });
 
+server.get<{ Params: { id: string } }>('/api/clients/:id', {
+  schema: {
+    params: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id'],
+      properties: { id: { type: 'string', format: 'uuid' } },
+    },
+  },
+  handler: async (request, reply) => {
+    const { id } = request.params;
+    const sql = 'SELECT * FROM clients WHERE id = $1';
+    const values = [id];
+    const query = await database.query<Client>(sql, values);
+
+    if (query.rowCount === 0) {
+      reply.code(404);
+      reply.send({ message: 'client not found' });
+      return;
+    }
+
+    const client = query.rows[0] as Client;
+
+    reply.code(200);
+    reply.send(client);
+  },
+});
+
 server.post('/api/clients', {
   schema: {
     body: {
