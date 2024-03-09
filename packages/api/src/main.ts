@@ -137,5 +137,31 @@ server.put<{ Params: { id: string } }>('/api/clients/:id', {
   },
 });
 
+server.delete<{ Params: { id: string } }>('/api/clients/:id', {
+  schema: {
+    params: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['id'],
+      properties: { id: { type: 'string', format: 'uuid' } },
+    },
+  },
+  handler: async (request, reply) => {
+    const { id } = request.params;
+    const sql = 'DELETE FROM clients WHERE id = $1';
+    const values = [id];
+    const query = await database.query(sql, values);
+
+    if (query.rowCount === 0) {
+      reply.code(404);
+      reply.send({ message: 'client not found' });
+      return;
+    }
+
+    reply.code(204);
+    reply.send();
+  },
+});
+
 await server.listen({ port: 3333, host: '0.0.0.0' });
 console.log('server listening on port 3333');
